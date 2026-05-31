@@ -1,0 +1,31 @@
+{
+  "name": "todotree",
+  "version": "1.0.0",
+  "description": "Scan code for TODO/FIXME/HACK comments and organize them by file, author, priority, and age",
+  "main": "dist/index.js",
+  "bin": {
+    "todotree": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["todo", "fixme", "hack", "code-quality", "cli", "scanner"],
+  "author": "sulthonzh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sulthonzh/todotree"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/jest": "^29.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
