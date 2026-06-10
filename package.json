@@ -1,0 +1,11 @@
+{
+  "name": "todotree",
+  "version": "1.0.0",
+  "description": "Find TODO/FIXME/HACK comments in your codebase, organized by file",
+  "bin": { "todotree": "./cli.js" },
+  "files": ["cli.js", "index.js"],
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "keywords": ["todo", "fixme", "hack", "code-quality", "cli", "comments"],
+  "license": "MIT",
+  "engines": { "node": ">=18" }
+}
