@@ -1,14 +1,27 @@
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
 
 const TAGS = ["TODO", "FIXME", "HACK", "XXX", "BUG", "NOTE", "OPTIMIZE", "CHANGED"];
-const TAG_RE = new RegExp("\\b(" + TAGS.join("|") + ")\\b[:\\s]*(.*)", "i");
+const TAG_LINE_RE = new RegExp("\\b(" + TAGS.join("|") + ")(?:\\([^)]*\\))?[:\\s]*(.*)", "gi");
 const DEFAULT_IGNORE = [
   "node_modules", ".git", ".svn", ".hg", "vendor", "dist", "build",
   ".next", ".nuxt", "coverage", "__pycache__", ".cache", ".turbo",
   "package-lock.json", "yarn.lock", "pnpm-lock.yaml",
 ];
+
+const TEXT_EXTS = new Set([
+  ".js",".mjs",".cjs",".ts",".tsx",".jsx",".vue",".svelte",
+  ".py",".rb",".go",".rs",".java",".kt",".swift",".c",".cpp",".h",".hpp",
+  ".cs",".scala",".clj",".ex",".exs",".erl",".hs",".ml",".fs",".fsx",
+  ".php",".pl",".pm",".r",".R",".m",".mm",
+  ".html",".css",".scss",".less",".sass",".styl",
+  ".md",".mdx",".txt",".rst",".adoc",".org",
+  ".yaml",".yml",".toml",".ini",".cfg",".conf",
+  ".json",".jsonc",".json5",
+  ".sh",".bash",".zsh",".fish",".ps1",".bat",".cmd",
+  ".sql",".graphql",".proto",".dockerfile",
+  ".lua",".vim",".el",".tcl",
+]);
 
 function shouldIgnore(relPath, ignore) {
   const parts = relPath.split(path.sep);
@@ -17,27 +30,14 @@ function shouldIgnore(relPath, ignore) {
 
 function isTextFile(filePath) {
   const ext = path.extname(filePath).toLowerCase();
-  const textExts = [
-    ".js",".mjs",".cjs",".ts",".tsx",".jsx",".vue",".svelte",
-    ".py",".rb",".go",".rs",".java",".kt",".swift",".c",".cpp",".h",".hpp",
-    ".cs",".scala",".clj",".ex",".exs",".erl",".hs",".ml",".fs",".fsx",
-    ".php",".pl",".pm",".r",".R",".m",".mm",
-    ".html",".css",".scss",".less",".sass",".styl",
-    ".md",".mdx",".txt",".rst",".adoc",".org",
-    ".yaml",".yml",".toml",".ini",".cfg",".conf",
-    ".json",".jsonc",".json5",
-    ".sh",".bash",".zsh",".fish",".ps1",".bat",".cmd",
-    ".sql",".graphql",".proto",".dockerfile",
-    ".lua",".vim",".el",".tcl",
-  ];
-  return textExts.includes(ext) || filePath.endsWith("Dockerfile") || filePath.endsWith("Makefile");
+  return TEXT_EXTS.has(ext) || filePath.endsWith("Dockerfile") || filePath.endsWith("Makefile");
 }
 
 function extractTags(line) {
   const matches = [];
-  const re = new RegExp("\\b(" + TAGS.join("|") + ")(?:\\([^)]*\\))?[:\\s]*(.*)", "gi");
+  TAG_LINE_RE.lastIndex = 0;
   let m;
-  while ((m = re.exec(line)) !== null) {
+  while ((m = TAG_LINE_RE.exec(line)) !== null) {
     matches.push({ tag: m[1].toUpperCase(), text: m[2].trim() });
   }
   return matches;
